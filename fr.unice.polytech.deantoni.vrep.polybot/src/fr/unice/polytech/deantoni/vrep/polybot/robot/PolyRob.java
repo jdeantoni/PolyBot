@@ -8,7 +8,7 @@ import coppelia.IntW;
 import coppelia.remoteApi;
 import fr.unice.polytech.deantoni.vrep.polybot.utils.Blob;
 
-public class PolyBubbleRob {
+public class PolyRob {
 	
 	protected  int clientID = -1;
 	protected remoteApi vrep = new remoteApi();
@@ -35,7 +35,7 @@ public class PolyBubbleRob {
     //robot parameters
 	protected float gripForce= (float) 0.08;
 		
-	public PolyBubbleRob(String IP, int portNumber){
+	public PolyRob(String IP, int portNumber){
 		clientID = vrep.simxStart(IP,portNumber,true,true,5000,5);
 		if (clientID == -1) {
 			throw new RuntimeException("impossible to connect to V-REP server");
@@ -44,12 +44,12 @@ public class PolyBubbleRob {
 			System.out.println("connected to the server....");
 		}
 		
-		vrep.simxGetObjectHandle(clientID, "PolyBubbleRob" ,rob,remoteApi.simx_opmode_blocking); // Handle rob !
-		vrep.simxGetObjectHandle(clientID, "Barrett_openCloseJoint",rightGrip,remoteApi.simx_opmode_blocking); // Handle of the grip
-		vrep.simxGetObjectHandle(clientID, "Barrett_openCloseJoint0",rightGripBis,remoteApi.simx_opmode_blocking); // Handle of the grip bis
-		vrep.simxGetObjectHandle(clientID, "PolyBubbleRobLeftMotor",leftMotor,remoteApi.simx_opmode_blocking); // Handle of the left motor
-		vrep.simxGetObjectHandle(clientID, "PolyBubbleRobRightMotor" ,rightMotor,remoteApi.simx_opmode_blocking); // Handle of the right motor
-		vrep.simxGetObjectHandle(clientID, "PolyBubbleRobSensingNose" ,proxSensor,remoteApi.simx_opmode_blocking); // Handle of the proximity sensor
+		vrep.simxGetObjectHandle(clientID, "PolyRob" ,rob,remoteApi.simx_opmode_blocking); // Handle rob !
+		vrep.simxGetObjectHandle(clientID, "PolyRobOpenCloseJoint",rightGrip,remoteApi.simx_opmode_blocking); // Handle of the grip
+		vrep.simxGetObjectHandle(clientID, "PolyRobOpenCloseJoint0",rightGripBis,remoteApi.simx_opmode_blocking); // Handle of the grip bis
+		vrep.simxGetObjectHandle(clientID, "PolyRobLeftMotor",leftMotor,remoteApi.simx_opmode_blocking); // Handle of the left motor
+		vrep.simxGetObjectHandle(clientID, "PolyRobRightMotor" ,rightMotor,remoteApi.simx_opmode_blocking); // Handle of the right motor
+		vrep.simxGetObjectHandle(clientID, "PolyRobSensingNose" ,proxSensor,remoteApi.simx_opmode_blocking); // Handle of the proximity sensor
 		vrep.simxGetObjectHandle(clientID, "blobDetectionCamera_camera" ,camera,remoteApi.simx_opmode_blocking); // Handle of the camera sensor
 		System.out.println("ready to go ! ");
 	}
