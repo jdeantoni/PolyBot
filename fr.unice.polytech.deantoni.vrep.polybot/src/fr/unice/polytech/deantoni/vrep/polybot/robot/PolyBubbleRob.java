@@ -1,4 +1,4 @@
-package robot;
+package fr.unice.polytech.deantoni.vrep.polybot.robot;
 import java.util.ArrayList;
 
 import coppelia.BoolW;

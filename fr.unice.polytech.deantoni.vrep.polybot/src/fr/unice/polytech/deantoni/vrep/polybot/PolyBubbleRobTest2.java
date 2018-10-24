@@ -1,6 +1,6 @@
 package fr.unice.polytech.deantoni.vrep.polybot;
 
-import robot.PolyBubbleRob;
+import fr.unice.polytech.deantoni.vrep.polybot.robot.PolyBubbleRob;
 
 public class PolyBubbleRobTest2 {
 	

@@ -1,9 +1,8 @@
 package fr.unice.polytech.deantoni.vrep.polybot;
 import java.util.ArrayList;
 
-import coppelia.remoteApi;
+import fr.unice.polytech.deantoni.vrep.polybot.robot.PolyBubbleRob;
 import fr.unice.polytech.deantoni.vrep.polybot.utils.Blob;
-import robot.PolyBubbleRob;
 
 public class PolyBubbleRobTest {
 	
