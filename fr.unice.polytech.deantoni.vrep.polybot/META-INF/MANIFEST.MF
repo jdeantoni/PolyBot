@@ -6,6 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: vrepLibs/
 Export-Package: .,
  coppelia,
- fr.unice.polytech.deantoni.vrep.polybot
+ fr.unice.polytech.deantoni.vrep.polybot,
+ fr.unice.polytech.deantoni.vrep.polybot.robot,
+ fr.unice.polytech.deantoni.vrep.polybot.utils
 Automatic-Module-Name: fr.unice.polytech.deantoni.vrep.polybot
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

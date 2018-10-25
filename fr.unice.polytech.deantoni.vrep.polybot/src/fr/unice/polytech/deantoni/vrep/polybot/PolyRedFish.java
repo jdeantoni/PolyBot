@@ -3,6 +3,7 @@ import java.util.ArrayList;
 
 import fr.unice.polytech.deantoni.vrep.polybot.robot.PolyRob;
 import fr.unice.polytech.deantoni.vrep.polybot.utils.Blob;
+import fr.unice.polytech.deantoni.vrep.polybot.utils.Position2D;
 
 public class PolyRedFish {
 	
@@ -13,65 +14,79 @@ public class PolyRedFish {
 		
 		rob.start();
 		rob.openGrip();
-	
-		rob.sleep(800);
-		int i = 0;
-		while(i < 5) {
-			i++;
-			 double dist = 10;
-			while (!rob.hasDetectedAnObject() || dist > 2) {
-				 dist = rob.detectedObjectPoint.getArray()[0]*rob.detectedObjectPoint.getArray()[0]+rob.detectedObjectPoint.getArray()[1]*rob.detectedObjectPoint.getArray()[1]+rob.detectedObjectPoint.getArray()[2]*rob.detectedObjectPoint.getArray()[2];
-				ArrayList<Blob> blobs = rob.getViewableBlobs();
-				for(Blob b : blobs) {
-					System.out.println("\t blob ["+b.positionX+" ; "+b.positionY+"]");
-				}
-				int[] pos = rob.getPosition();
-				System.out.println("rob ["+pos[0]+" ; "+pos[1]+"]");
-				int sl = (int) (Math.random()*15);
-				int sr = (int) (Math.random()*15);
-				rob.goCurved(sl, sr);
-				rob.sleep(100);
-			}
-			
+		System.out.println(rob.getPosition().x+" ; "+rob.getPosition().y);
+		rob.turnLeft(4,500);
+		System.out.println(rob.getOrientation());
+		rob.turnLeft(4,500);
+		System.out.println(rob.getOrientation());
+		rob.turnLeft(4,500);
+		System.out.println(rob.getOrientation());
+		rob.turnLeft(4,500);
+		System.out.println(rob.getOrientation());rob.turnLeft(4,500);
+		System.out.println(rob.getOrientation());rob.turnLeft(4,500);
+		System.out.println(rob.getOrientation());rob.turnLeft(4,500);
+		System.out.println(rob.getOrientation());rob.turnLeft(4,500);
+		System.out.println(rob.getOrientation());rob.turnLeft(4,500);
+		System.out.println(rob.getOrientation());
 		
-			
-			
-			rob.goStraight(0);
-			// Now send some data to V-REP in a non-blocking fashion:
-	
-	       dist = rob.detectedObjectPoint.getArray()[0]*rob.detectedObjectPoint.getArray()[0]+rob.detectedObjectPoint.getArray()[1]*rob.detectedObjectPoint.getArray()[1]+rob.detectedObjectPoint.getArray()[2]*rob.detectedObjectPoint.getArray()[2];
-	       rob.log2vrep("dist "+dist);
-	
-			while(dist > 0.0045) {
-				
-				System.out.println(dist+"\n\t"+rob.detectedObjectPoint.getArray()[0]+" "+rob.detectedObjectPoint.getArray()[1]+" "+rob.detectedObjectPoint.getArray()[2]);
-				rob.goStraight(2);
-				if (rob.detectedObjectPoint.getArray()[0] > 0){
-					rob.goCurved(2,3);
-					System.out.println("turn left");
-				}
-				else{
-					rob.goCurved(3,2);
-					System.out.println("turn right");
-				}
-				rob.log2vrep("dist "+dist);
-				rob.sleep(100);
-				rob.hasDetectedAnObject();
-				dist = rob.detectedObjectPoint.getArray()[0]*rob.detectedObjectPoint.getArray()[0]+rob.detectedObjectPoint.getArray()[1]*rob.detectedObjectPoint.getArray()[1]+rob.detectedObjectPoint.getArray()[2]*rob.detectedObjectPoint.getArray()[2];
-			}
-			rob.log2vrep("last dist "+dist);
-			
-			rob.closeGrip();
-			rob.sleep(1500);
-			rob.goStraight(-4, 500);
-			rob.turnLeft(7, 2000);
-			rob.goStraight(15);
-			rob.sleep(4000);
-			rob.openGrip();
-			rob.goStraight(-5, 3000);
-			rob.turnLeft(6,1000);
-			rob.sleep(1500);
-		}
+//		rob.sleep(800);
+//		int i = 0;
+//		while(i < 5) {
+//			i++;
+//			 double dist = 10;
+//			while (!rob.hasDetectedAnObject() || dist > 2) {
+//				 dist = rob.getDetectedObjectDistance();
+//				ArrayList<Blob> blobs = rob.getViewableBlobs();
+//				for(Blob b : blobs) {
+//					System.out.println("\t blob ["+b.positionX+" ; "+b.positionY+"]");
+//				}
+//				Position2D pos = rob.getPosition();
+//				System.out.println("rob ["+pos.x+" ; "+pos.y+"]");
+//				int sl = (int) (Math.random()*15);
+//				int sr = (int) (Math.random()*15);
+//				rob.goCurved(sl, sr);
+//				rob.sleep(100);
+//			}
+//			
+//		
+//			
+//			
+//			rob.goStraight(0);
+//			// Now send some data to V-REP in a non-blocking fashion:
+//	
+//	       dist = rob.getDetectedObjectDistance();
+//	       rob.log2vrep("dist "+dist);
+//	
+//			while(dist > 0.0045) {
+//				
+//				System.out.println(dist+"\n\t"+rob.detectedObjectPoint.getArray()[0]+" "+rob.detectedObjectPoint.getArray()[1]+" "+rob.detectedObjectPoint.getArray()[2]);
+//				rob.goStraight(2);
+//				if (rob.detectedObjectPoint.getArray()[0] > 0){
+//					rob.goCurved(2,3);
+//					System.out.println("turn left");
+//				}
+//				else{
+//					rob.goCurved(3,2);
+//					System.out.println("turn right");
+//				}
+//				rob.log2vrep("dist "+dist);
+//				rob.sleep(100);
+//				rob.hasDetectedAnObject();
+//				dist = rob.detectedObjectPoint.getArray()[0]*rob.detectedObjectPoint.getArray()[0]+rob.detectedObjectPoint.getArray()[1]*rob.detectedObjectPoint.getArray()[1]+rob.detectedObjectPoint.getArray()[2]*rob.detectedObjectPoint.getArray()[2];
+//			}
+//			rob.log2vrep("last dist "+dist);
+//			
+//			rob.closeGrip();
+//			rob.sleep(1500);
+//			rob.goStraight(-4, 500);
+//			rob.turnLeft(7, 2000);
+//			rob.goStraight(15);
+//			rob.sleep(4000);
+//			rob.openGrip();
+//			rob.goStraight(-5, 3000);
+//			rob.turnLeft(6,1000);
+//			rob.sleep(1500);
+//		}
 		rob.stopSimulation();
 	}
 

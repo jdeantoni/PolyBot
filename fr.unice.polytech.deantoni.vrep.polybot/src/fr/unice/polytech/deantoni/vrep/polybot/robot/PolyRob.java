@@ -7,6 +7,7 @@ import coppelia.FloatWAA;
 import coppelia.IntW;
 import coppelia.remoteApi;
 import fr.unice.polytech.deantoni.vrep.polybot.utils.Blob;
+import fr.unice.polytech.deantoni.vrep.polybot.utils.Position2D;
 
 public class PolyRob {
 	
@@ -32,8 +33,10 @@ public class PolyRob {
 	public IntW handleDetectedObj = new IntW(0);
 	public FloatWA mapDetectedObject = new FloatWA(0);
     
+    
     //robot parameters
 	protected float gripForce= (float) 0.08;
+	protected int mapFactor = 1000;
 		
 	public PolyRob(String IP, int portNumber){
 		clientID = vrep.simxStart(IP,portNumber,true,true,5000,5);
@@ -51,11 +54,20 @@ public class PolyRob {
 		vrep.simxGetObjectHandle(clientID, "PolyRobRightMotor" ,rightMotor,remoteApi.simx_opmode_blocking); // Handle of the right motor
 		vrep.simxGetObjectHandle(clientID, "PolyRobSensingNose" ,proxSensor,remoteApi.simx_opmode_blocking); // Handle of the proximity sensor
 		vrep.simxGetObjectHandle(clientID, "blobDetectionCamera_camera" ,camera,remoteApi.simx_opmode_blocking); // Handle of the camera sensor
+		
 		System.out.println("ready to go ! ");
 	}
+
+	
 	
 	public void start() {
 		vrep.simxStartSimulation(clientID, remoteApi.simx_opmode_oneshot);
+	}
+	
+	
+	public void readNoseSensor() {
+		vrep.simxReadProximitySensor(clientID, proxSensor.getValue(), objectDetected, detectedObjectPoint, handleDetectedObj, mapDetectedObject, remoteApi.simx_opmode_blocking);
+		return;
 	}
 	
 	/**
@@ -66,6 +78,12 @@ public class PolyRob {
 	public boolean hasDetectedAnObject() {
 		vrep.simxReadProximitySensor(clientID, proxSensor.getValue(), objectDetected, detectedObjectPoint, handleDetectedObj, mapDetectedObject, remoteApi.simx_opmode_blocking);
 		return objectDetected.getValue();
+	}
+	
+	public int getDetectedObjectDistance() {
+		double distX = detectedObjectPoint.getArray()[0];
+		double distY = detectedObjectPoint.getArray()[1];
+		return (int)(Math.sqrt(distX*distX+distY*distY)*mapFactor*10);
 	}
 	
 	public void openGrip() {
@@ -141,31 +159,36 @@ public class PolyRob {
         vrep.simxFinish(clientID);
 	}
 	
-	public int[] getPosition() {
+	public Position2D getPosition() {
 		FloatWA pos = new FloatWA(3);
 		vrep.simxGetObjectPosition(clientID, rob.getValue(), camera.getValue(), pos, remoteApi.simx_opmode_blocking);
-		float x = pos.getArray()[0];
-		float y = pos.getArray()[1];
-		int[] res = new int[2];
-		res[0] = (int) Math.round(((2.3+ -y)/4.6)*100);
-		res[1] = (int) Math.round(((2.3+x)/4.6)*100);
+		float x = pos.getArray()[0]+0.40f;
+		float y = pos.getArray()[1]-0.042f;
+		Position2D res = new Position2D(0, 0);
+		res.y = (int) Math.round(((2.3+ -y)/4.6)*mapFactor);
+		res.x = (int) Math.round(((2.3+x)/4.6)*mapFactor);
 		return res;
 	}
 	
 	/**
 	 * 
-	 * @return the orientation in radian on the z axis between ]-pi;pi]
+	 * @return the orientation in radian on the z axis between [0;2pi[
 	 */
 	public float getOrientation() {
 		FloatWA angles = new FloatWA(3);
 		vrep.simxGetObjectOrientation(clientID, rob.getValue(), camera.getValue(), angles, remoteApi.simx_opmode_blocking);
-		return angles.getArray()[2];
+		//nomalisation 0;2pi
+		if (angles.getArray()[2] < 0) {
+			return (float) (Math.PI + (Math.PI + angles.getArray()[2]));
+		}else {
+			return (float) (angles.getArray()[2]);
+		}
 	}
 	
 	public ArrayList<Blob> getViewableBlobs() {
 		ArrayList<Blob> res = new ArrayList<Blob>();
 		BoolW isThereADetection = new BoolW(false);
-		FloatWAA blobInformations = new FloatWAA(25*1024*1024);
+		FloatWAA blobInformations = new FloatWAA(20*1024*1024);
 		vrep.simxReadVisionSensor(clientID,camera.getValue(), isThereADetection,blobInformations,remoteApi.simx_opmode_blocking) ; //Here we read the image processing camera!
         if (blobInformations.getArray().length > 0 &&  blobInformations.getArray()[1].getLength() > 0) {
         	// in t1 we should have the blob information if the camera was set-up correctly
@@ -176,8 +199,8 @@ public class PolyRob {
             	Blob aBlob = new Blob();
                 aBlob.size =blobInformations.getArray()[1].getArray()[(int) (2+(i)*dataSizePerBlob+0)];
                 aBlob.orientation=blobInformations.getArray()[1].getArray()[(int) (2+(i)*dataSizePerBlob+1)];
-                aBlob.positionX = Math.round(blobInformations.getArray()[1].getArray()[(int) (2+(i)*dataSizePerBlob+2)]*100);
-                aBlob.positionY = Math.round(blobInformations.getArray()[1].getArray()[(int) (2+(i)*dataSizePerBlob+3)]*100);
+                aBlob.positionX = (mapFactor - Math.round(blobInformations.getArray()[1].getArray()[(int) (2+(i)*dataSizePerBlob+2)]*mapFactor))+40;
+                aBlob.positionY = mapFactor - Math.round(blobInformations.getArray()[1].getArray()[(int) (2+(i)*dataSizePerBlob+3)]*mapFactor);
                 aBlob.dimension[0] = blobInformations.getArray()[1].getArray()[(int)(2+(i)*dataSizePerBlob+4)];
                 aBlob.dimension[1] = blobInformations.getArray()[1].getArray()[(int)(2+(i)*dataSizePerBlob+5)];
     
@@ -189,7 +212,7 @@ public class PolyRob {
                 }
                 
                 if (Math.abs(aBlob.dimension[0] - aBlob.dimension[1]) < 0.1) { //ball or square
-                	if (Math.abs(aBlob.dimension[0] - 0.03) < 0.005) { //a paint bomb
+                	if (((aBlob.dimension[0] - 0.023) > 0) && (aBlob.dimension[0] - 0.023) < 0.01) { //a paint bomb
                 		res.add(aBlob);
                 	}
                 }
