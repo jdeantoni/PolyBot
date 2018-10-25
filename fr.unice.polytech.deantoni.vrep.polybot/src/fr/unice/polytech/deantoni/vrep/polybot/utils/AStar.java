@@ -12,6 +12,15 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
+/**
+ * This is actually not the A* algorithm since the Heuristic has been remove.
+ * Dijkstra's algo would have been more appropriate but this implementation was
+ * pretty nicely coded.
+ * 
+ * @author ??
+ *
+ * @param <T>
+ */
 public class AStar<T> {
 
     private final GraphAStar<T> graph;
