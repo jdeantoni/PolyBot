@@ -43,7 +43,7 @@ public class PolyBrain extends PolyRob{
 	protected List<Position2D> path;
 	protected int indexInPath;
 	
-	protected Position2D safePlace = new Position2D(-25, 500);
+	protected Position2D safePlace = new Position2D(-45, 500);
 	
 	protected boolean pathToCompute = true;
 	protected boolean goToSafePlace = false;
@@ -94,8 +94,8 @@ public class PolyBrain extends PolyRob{
 				this.goToSafePlace(robPos, robOrientation);
 			}else if (this.isInSafePlace){
 				this.openGrip();
-				this.sleep(400);
-				this.goStraight(-7,1500);
+				this.sleep(600);
+				this.goStraight(-7,2500);
 				this.isInSafePlace = false;
 			}else {
 				blobs = this.getViewableBlobs();
@@ -183,8 +183,9 @@ public class PolyBrain extends PolyRob{
 			this.sleep(100);
 			this.hasDetectedAnObject();
 		}else {
+			this.goStraight(3, 300);
 			this.closeGrip();
-			this.goStraight(1,500);
+			this.goStraight(3,1500);
 			closeMode = false;
 			goToSafePlace  = true;
 		}
@@ -242,7 +243,8 @@ public class PolyBrain extends PolyRob{
 		if(angleToDo > 0) { this.turnRight(4); this.sleep((int)Math.abs(angleToDo*1300));} //black magic computation
 		else {this.turnLeft(4); this.sleep((int)Math.abs(angleToDo*1300));}
 		
-		this.goStraight(8, 600); //should depends on the destination distance...
+		this.goStraight(8); //should depends on the destination distance...
+		this.sleep(300);
 	}
 	
 	protected void goToSafePlace(Position2D robPos, float robOrientation) {
