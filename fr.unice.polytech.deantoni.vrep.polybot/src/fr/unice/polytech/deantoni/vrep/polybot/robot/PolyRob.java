@@ -190,7 +190,7 @@ public class PolyRob {
 		BoolW isThereADetection = new BoolW(false);
 		FloatWAA blobInformations = new FloatWAA(20*1024*1024);
 		vrep.simxReadVisionSensor(clientID,camera.getValue(), isThereADetection,blobInformations,remoteApi.simx_opmode_blocking) ; //Here we read the image processing camera!
-        if (blobInformations.getArray().length > 0 &&  blobInformations.getArray()[1].getLength() > 0) {
+        if (blobInformations.getArray().length > 0 &&  blobInformations.getArray()[1] != null && blobInformations.getArray()[1].getLength() > 0) {
         	// in t1 we should have the blob information if the camera was set-up correctly
         	 float blobCount=blobInformations.getArray()[1].getArray()[0];
         	 float dataSizePerBlob=blobInformations.getArray()[1].getArray()[1];

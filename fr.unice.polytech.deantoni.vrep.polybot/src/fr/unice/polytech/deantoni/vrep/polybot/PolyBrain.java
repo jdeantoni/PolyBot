@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2018 I3S laboratory and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Julien Deantoni - initial API and implementation
+ *******************************************************************************/
+
 package fr.unice.polytech.deantoni.vrep.polybot;
 
 import java.util.ArrayList;
@@ -12,6 +23,11 @@ import fr.unice.polytech.deantoni.vrep.polybot.utils.GraphAStar;
 import fr.unice.polytech.deantoni.vrep.polybot.utils.NodeData;
 import fr.unice.polytech.deantoni.vrep.polybot.utils.Position2D;
 
+/**
+ * not smart enough but better than the Red fish version
+ * @author Julien Deantoni
+ *
+ */
 public class PolyBrain extends PolyRob{
 	
 	
@@ -142,7 +158,7 @@ public class PolyBrain extends PolyRob{
 	protected void smoothMoveToTarget() {
 		
 		if (!this.hasDetectedAnObject()) {
-			this.turnLeft(2);
+			this.turnRight(3);
 			return;
 		}
 		
