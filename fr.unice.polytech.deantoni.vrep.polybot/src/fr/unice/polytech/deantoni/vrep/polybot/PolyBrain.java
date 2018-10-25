@@ -24,18 +24,21 @@ import fr.unice.polytech.deantoni.vrep.polybot.utils.NodeData;
 import fr.unice.polytech.deantoni.vrep.polybot.utils.Position2D;
 
 /**
- * not smart enough but better than the Red fish version
+ * not smart enough but better than the Red fish version. the goal of this class
+ * is to illustrate an unstructured code that control a robot in V-REP. It is
+ * used in Finite State Machine Course where the student have to rewrite the
+ * control code in a state chart. The associated hands on is located
+ * here: @http://www.i3s.unice.fr/~deantoni/teaching_resources/SI4/FSM/TDs/
+ * 
  * @author Julien Deantoni
- *
  */
 public class PolyBrain extends PolyRob{
-	
 	
 	/**
 	 * a Map to store interesting things, like walls, etc
 	 */
-	public ArrayList<Position2D> flatMap = new ArrayList<Position2D>(mapFactor*mapFactor);
-	public GraphAStar<Position2D> graph = new GraphAStar<Position2D>();
+	protected ArrayList<Position2D> flatMap = new ArrayList<Position2D>(mapFactor*mapFactor);
+	protected GraphAStar<Position2D> graph = new GraphAStar<Position2D>();
 	//may need an obstacle map for soft reset
 	protected List<Position2D> path;
 	protected int indexInPath;
@@ -62,7 +65,6 @@ public class PolyBrain extends PolyRob{
         		flatMap.add(p);
         	}
         }
-        
         for(int i=0; i < mapFactor; i++) {
         	for(int j = 0; j < mapFactor; j++) {
         		setNeighbourHoodCost(graph, i, j, 1);
@@ -70,49 +72,39 @@ public class PolyBrain extends PolyRob{
         }
 	}
 
-	protected void setNeighbourHoodCost(GraphAStar<Position2D> graph, int i, int j, int cost) {
-		if (i > 1)  graph.addEdge(flatMap.get((i*mapFactor)+j), flatMap.get(((i-1)*mapFactor)+j), cost);
-		if (j < (mapFactor-1)) graph.addEdge(flatMap.get((i*mapFactor)+j), flatMap.get((i*mapFactor)+j+1), cost);
-		if (j > 0)  graph.addEdge(flatMap.get((i*mapFactor)+j), flatMap.get((i*mapFactor)+j-1), cost);
-		if (i < (mapFactor-1)) graph.addEdge(flatMap.get((i*mapFactor)+j), flatMap.get(((i+1)*mapFactor)+j), cost);
-	}
-
-	protected void modifyNeighbourHoodCost(GraphAStar<Position2D> graph, int i, int j, int cost) {
-		Map<NodeData<Position2D>, Double> edgesToChange = graph.edgesFrom(flatMap.get((i*mapFactor)+j));
-		for (Entry<NodeData<Position2D>, Double> edgeEntry : edgesToChange.entrySet()) {
-			edgeEntry.setValue((double)cost);
-		}
-	}
-	
-	
 	public static void main(String[] args) {
 		PolyBrain rob = new PolyBrain("127.0.0.1", 19997);
 		rob.start();
-		rob.openGrip();
-		rob.readNoseSensor();
-		ArrayList<Blob> blobs = rob.getViewableBlobs();
-		while(!blobs.isEmpty() || (rob.closeMode  || rob.goToSafePlace || rob.isInSafePlace)) {
+		rob.realizeMission();
+	}
+
+	public void realizeMission() {
+		this.openGrip();
+		this.readNoseSensor();
+		ArrayList<Blob> blobs = this.getViewableBlobs();
+		while(!blobs.isEmpty() || (this.closeMode  || this.goToSafePlace || this.isInSafePlace)) {
 			System.out.println("still paint bombs to move...");
 			Position2D blobPos = new Position2D(blobs.get(0).positionX, blobs.get(0).positionY);
-			Position2D robPos = rob.getPosition();
-			float robOrientation = rob.getOrientation();
-			rob.closeMode = rob.updateMapAndMode(blobs, robPos, robOrientation);
-			if(rob.closeMode){
-				rob.smoothMoveToTarget();
-			}else if (rob.goToSafePlace) {
-				rob.goToSafePlace(robPos, robOrientation);
-			}else if (rob.isInSafePlace){
-				rob.openGrip();
-				rob.sleep(400);
-				rob.goStraight(-7,1500);
-				rob.isInSafePlace = false;
+			Position2D robPos = this.getPosition();
+			float robOrientation = this.getOrientation();
+			this.closeMode = this.updateMapAndMode(blobs, robPos, robOrientation);
+			if(this.closeMode){
+				this.smoothMoveToTarget();
+			}else if (this.goToSafePlace) {
+				this.goToSafePlace(robPos, robOrientation);
+			}else if (this.isInSafePlace){
+				this.openGrip();
+				this.sleep(400);
+				this.goStraight(-7,1500);
+				this.isInSafePlace = false;
 			}else {
-				blobs = rob.getViewableBlobs();
-		        Position2D destination = rob.computeNextDestination(blobPos, robPos, true);
-			    rob.goToDestination(blobPos, robPos, robOrientation, destination);
+				blobs = this.getViewableBlobs();
+		        Position2D destination = this.computeNextDestination(blobPos, robPos, true);
+			    this.goToDestination(blobPos, robPos, robOrientation, destination);
 			}
 		}
 		System.out.println("job finished...");
+		this.goStraight(0);
 	}
 
 	protected boolean updateMapAndMode(ArrayList<Blob> blobs, Position2D robPos, float robOrientation) {
@@ -136,7 +128,21 @@ public class PolyBrain extends PolyRob{
 		}
 		return closeMode;
 	}
+	
+	protected void setNeighbourHoodCost(GraphAStar<Position2D> graph, int i, int j, int cost) {
+		if (i > 1)  graph.addEdge(flatMap.get((i*mapFactor)+j), flatMap.get(((i-1)*mapFactor)+j), cost);
+		if (j < (mapFactor-1)) graph.addEdge(flatMap.get((i*mapFactor)+j), flatMap.get((i*mapFactor)+j+1), cost);
+		if (j > 0)  graph.addEdge(flatMap.get((i*mapFactor)+j), flatMap.get((i*mapFactor)+j-1), cost);
+		if (i < (mapFactor-1)) graph.addEdge(flatMap.get((i*mapFactor)+j), flatMap.get(((i+1)*mapFactor)+j), cost);
+	}
 
+	protected void modifyNeighbourHoodCost(GraphAStar<Position2D> graph, int i, int j, int cost) {
+		Map<NodeData<Position2D>, Double> edgesToChange = graph.edgesFrom(flatMap.get((i*mapFactor)+j));
+		for (Entry<NodeData<Position2D>, Double> edgeEntry : edgesToChange.entrySet()) {
+			edgeEntry.setValue((double)cost);
+		}
+	}
+	
 	protected boolean checkIfDetectedObjectIsAPaintBomb(ArrayList<Blob> blobs, Position2D objectCoordinate,boolean addIt) {
 		for(Blob b: blobs) {
 			if ((Math.abs(b.positionX - objectCoordinate.x) <= 50) && (Math.abs(b.positionY - objectCoordinate.y) <= 50)) {
@@ -156,12 +162,10 @@ public class PolyBrain extends PolyRob{
 	}
 
 	protected void smoothMoveToTarget() {
-		
 		if (!this.hasDetectedAnObject()) {
 			this.turnRight(3);
 			return;
 		}
-		
 		int dist = this.getDetectedObjectDistance();
 		System.out.println("distance =" +dist);
 		if (dist == 100) {
@@ -183,7 +187,6 @@ public class PolyBrain extends PolyRob{
 			this.goStraight(1,500);
 			closeMode = false;
 			goToSafePlace  = true;
-			
 		}
 	}
 
@@ -270,23 +273,7 @@ public class PolyBrain extends PolyRob{
 
 	protected double computeAngleToReach(Position2D robPos, Position2D destination) {
 		double angleToReach = 0;
-//		if(destination.x==robPos.x) {
-//			if(destination.y > robPos.y) {
-//				angleToReach = Math.PI/2;
-//			}else {
-//				angleToReach = -Math.PI/2;
-//			}
-//		}
-//		else if(destination.y==robPos.y) {
-//			if(destination.x > robPos.x) {
-//				angleToReach = 0;
-//			}else {
-//				angleToReach = Math.PI;
-//			}
-//		}
-//		else {//square triangle
-			angleToReach =Math.atan2(destination.y -robPos.y, destination.x - robPos.x);
-//		}
+		angleToReach =Math.atan2(destination.y -robPos.y, destination.x - robPos.x);
 		return angleToReach;
 	}
 

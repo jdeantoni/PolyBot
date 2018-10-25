@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2018 I3S laboratory and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Julien Deantoni - initial API and implementation
+ *******************************************************************************/
+
 package fr.unice.polytech.deantoni.vrep.polybot;
 
 import java.util.ArrayList;
@@ -6,6 +17,15 @@ import fr.unice.polytech.deantoni.vrep.polybot.robot.PolyRob;
 import fr.unice.polytech.deantoni.vrep.polybot.utils.Blob;
 import fr.unice.polytech.deantoni.vrep.polybot.utils.Position2D;
 
+/**
+ * Random walk of the rob to illustrate the use of the PolyRob API. the goal of this class
+ * is to illustrate an unstructured code that control a robot in V-REP. It is
+ * used in Finite State Machine Course where the student have to rewrite the
+ * control code in a state chart. The associated hands on is located
+ * here: @http://www.i3s.unice.fr/~deantoni/teaching_resources/SI4/FSM/TDs/
+ * 
+ * @author Julien Deantoni
+ */
 public class PolyRedFish {
 
 	public static void main(String[] args) {
